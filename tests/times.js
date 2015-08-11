@@ -138,14 +138,14 @@ module.exports = function(expect, request, baseUrl) {
 
         // Sends invalid data to the /times/:id endpoint
         var invalidTime = {
-            duration:    undefined,
-            user:        undefined,
-            project:     undefined,
-            activities:  undefined,
-            notes:       undefined,
+            duration:    {thisIs: 'the wrong datatype'},
+            user:        {thisIs: 'the wrong datatype'},
+            project:     {thisIs: 'the wrong datatype'},
+            activities:  {thisIs: 'the wrong datatype'},
+            notes:       {thisIs: 'the wrong datatype'},
             // jscs:disable
-            issue_uri:   undefined,
-            date_worked: undefined,
+            issue_uri:   {thisIs: 'the wrong datatype'},
+            date_worked: {thisIs: 'the wrong datatype'},
             // jscs:enable
             key: 'this is a string',
         };
@@ -350,43 +350,43 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field duration of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             },
             {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field user of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             },
             {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field project of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             },
             {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field activities of time should be ' +
-                        'array but was sent as undefined'
+                        'array but was sent as object'
             },
             {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field notes of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             },
             {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field issue_uri of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             },
             {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field date_worked of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -405,7 +405,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field duration of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -426,7 +426,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field user of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -445,7 +445,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field project of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -464,7 +464,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field activities of time should be ' +
-                        'array but was sent as undefined'
+                        'array but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -483,7 +483,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field notes of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -502,7 +502,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field issue_uri of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -521,7 +521,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field date_worked of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -559,7 +559,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field duration of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -581,7 +581,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field user of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -601,7 +601,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field project of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -621,7 +621,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field activities of time should be ' +
-                        'array but was sent as undefined'
+                        'array but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -641,7 +641,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field notes of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -663,7 +663,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field issue_uri of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
@@ -685,7 +685,7 @@ module.exports = function(expect, request, baseUrl) {
                 status: 400,
                 error: 'Bad object',
                 text: 'Field date_worked of time should be ' +
-                        'string but was sent as undefined'
+                        'string but was sent as object'
             }];
 
             sendDataToEndpoint(done, postObj, expectedResults, error,
