@@ -206,4 +206,75 @@ module.exports = function(app) {
             return res.status(err.status).send(err);
         });
     });
+
+    app.post(app.get('version') + '/times/:id', function(req, res, next){
+        passport.authenticate('local', function(autherr, user, info) {
+            if (!user) {
+                let err = errors.errorAuthenticationFailure(info.message);
+                return res.status(err.status).send(err);
+            }
+
+            let obj = req.body.object;
+
+            let validKeys = ['duration', 'user', 'project', 'notes', 'activities', 'issue_uri', 'date_worked']
+            for (let key in obj) {
+                if (validKeys.indexOf(key) === -1) {
+                    let err = errors.errorBadObjectUnknownField('time', key);
+                    return res.status(err.status).send(err);
+                }
+            }
+
+            let fields = [
+                {name: 'duration', type: 'number', required: false},
+                {name: 'user', type: 'string', required: false},
+                {name: 'project', type: 'string', required: false},
+                {name: 'notes', type: 'string', required: false},
+                {name: 'activities', type: 'array', required: false},
+                {name: 'issue_uri', type: 'string', required: false},
+                {name: 'date_worked', type: 'string', required: false},
+            ];
+
+            let validationFailure = helpers.validateFields(obj, fields);
+            if (validationFailure) {
+                let err = errors.errorBadObjectInvalidField('time', validationFailure.name, validationFailure.type, validationFailure.actualType);
+                return res.status(err.status).send(err);
+            }
+
+            if (obj.duration && obj.duration < 0) {
+                let err = errors.errorBadObjectInvalidField('time', 'duration', 'positive integer', 'negative integer');
+                return res.status(err.status).send(err);
+            }
+
+            if (obj.date_worked && Date.parse(obj.date_worked) !== NaN) {
+                let err = errors.errorBadObjectInvalidField('time', 'date_worked', 'date', 'string');
+            }
+
+            if (obj.activities) {
+                let notStrings = obj.activities.filter(function(activity) {
+                    return typeof activity !== 'string';
+                });
+
+                if (notStrings.length) {
+                    let err = errors.errorBadObjectInvalidField('time', 'activities', 'array of strings', 'array of not strings');
+                    return res.status(err.status).send(err);
+                }
+
+                let invalidActivities = obj.activities.filter(function(activity) {
+                    return !helpers.validateSlug(activity);
+                });
+
+                if (invalidActivities.length) {
+                    let err = errors.errorBadObjectInvalidField('time', 'activities', 'array of slugs', 'array of not slugs');
+                    return res.status(err.status).send(err);
+                }
+            }
+
+            if (obj.issue_uri && !validUrl.isWebUri(obj.issue_uri)) {
+                let err = errors.errorBadObjectInvalidField('time', 'uri', 'uri', 'string');
+                return res.status(err.stauts).send(err);
+            }
+
+        });
+
+    });
 };
