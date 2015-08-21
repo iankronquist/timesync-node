@@ -194,6 +194,70 @@ module.exports = function(app) {
     });
   });
 
+  app.get(app.get('version') + '/times?project=:project', function(req, res) {
+    if (errors.isInvalidSlug(req.params.slug)) {
+      const err = errors.errorInvalidIdentifier('slug', req.params.slug);
+      return res.status(err.status).send(err);
+    }
+
+    projectId = knex('projectslugs').select('id').where('name', req.params.slug);
+    console.log(projectId);
+    if (isNaN(projectID)) {
+      const err = errors.errorInvalidIdentifier('slug', req.params.slug);
+      return res.status(err.status).send(err);
+    }
+
+    knex('times').where('project', '=', projectId).then(function(timeList) {
+      // get the matching time entry
+      if (timeList.length === 0) {
+        const err = errors.errorInvalidIdentifier('slug', req.params.slug);
+        return res.status(err.status).send(err);
+      }
+
+      knex('users').where({id: time.user}).select('username')
+      .then(function(user) {
+        // set its user
+        time.user = user[0].username;
+
+        knex('activities').select('slug').where('id', 'in',
+        knex('timesactivities').select('activity').where({time: time.id}))
+        .then(function(slugs) {
+          // and get all matching timeActivities
+
+          time.activities = [];
+          for (let i = 0, len = slugs.length; i < len; i++) {
+            // add a list containing all activities
+            time.activities.push(slugs[i].slug);
+          }
+
+          knex('projectslugs').where({project: time.project}).select('name')
+          .then(function(projectSlugs) {
+            // lastly, set the project
+            time.project = [];
+            for (let i = 0, len = projectSlugs.length; i < len; i++) {
+              time.project.push(projectSlugs[i].name);
+            }
+
+            return res.send(time);
+          }).catch(function(error) {
+            const err = errors.errorServerError(error);
+            return res.status(err.status).send(err);
+          });
+        }).catch(function(error) {
+          const err = errors.errorServerError(error);
+          return res.status(err.status).send(err);
+        });
+      }).catch(function(error) {
+        const err = errors.errorServerError(error);
+        return res.status(err.status).send(err);
+      });
+      }).catch(function(error) {
+        const err = errors.errorServerError(error);
+        return res.status(err.status).send(err);
+      });
+  });
+
+
   app.post(app.get('version') + '/times', function(req, res, next) {
     passport.authenticate('local', function(autherr, user, info) {
       if (!user) {
