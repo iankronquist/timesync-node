@@ -1,10 +1,11 @@
 'use strict';
 
 // Library requirements
-const express = require('express');
 const bodyParser = require('body-parser');
-const knexfile = require('../knexfile');
 const db = process.env.DATABASE || 'development';
+const express = require('express');
+const knexfile = require('../knexfile');
+const path = require('path');
 
 let knex;
 if (!GLOBAL.knex) {
@@ -19,6 +20,13 @@ if (!GLOBAL.knex) {
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.resolve(__dirname + '../docs/build/html')));
+// we shouldn't do this, this is just a proof of concept
+app.get('/docs*', function(req, res) {
+  let p = path.resolve(__dirname + '/../docs/build/html/' + req.originalUrl.replace('/docs', '/'));
+  res.sendFile(p);
+});
+
 app.set('knex', knex);
 
 // Set API version prefix
