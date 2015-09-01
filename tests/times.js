@@ -950,9 +950,9 @@ module.exports = function(expect, request, baseUrl) {
       activities:  ['docs', 'dev'],
       // jscs:disable
       issue_uri:
-         'https:://github.com/osu-cass/whats-fresh-api/issues/56',
-      date_worked: null,
-      created_at:  null,
+         'https://github.com/osu-cass/whats-fresh-api/issues/56',
+      date_worked: '2015-04-19',
+      created_at:  '2015-04-19',
       updated_at:  null,
       // jscs:enable
       id:      1
@@ -960,6 +960,7 @@ module.exports = function(expect, request, baseUrl) {
 
     // A completely patched version of the above time entry
     // Only contains valid patch elements.
+    var updatedAt = new Date().toISOString().substring(0,10);
     var patchedTime = {
       duration:  15,
       user:    'deanj',
@@ -969,6 +970,8 @@ module.exports = function(expect, request, baseUrl) {
       // jscs:disable
       issue_uri:   'https://github.com/osuosl/pgd/pull/19',
       date_worked: '2015-04-28',
+      created_at: '2015-04-19',
+      updated_at: updatedAt
       // jscs:enable
     };
 
@@ -1037,23 +1040,19 @@ module.exports = function(expect, request, baseUrl) {
                   postBodies) {
       postArg.object = postObj;
       requestOptions.form = postArg;
-      console.log(postObj);
 
       // make a given post request
       // check the error
       // check the statusCode
       // Also check the body of the request
       request.post(requestOptions, function(err, res, body) {
-        //console.log(postObj, expectedResults, body)
-        //jsonBody = JSON.parse(body)
-        //console.log(jsonBody);
-        //console.log(body);
         expect(body.error).to.equal(error);
         expect(res.statusCode).to.equal(statusCode);
 
         if (postBodies !== undefined) {
           // Is the recieved body within the array of expected bodies
-          expect(postBodies).to.include.members(body);
+          //console.log(body);
+          expect(body).to.deep.equal(postBodies[0]);
         }
 
         // Always checks for valid get request
@@ -1061,10 +1060,9 @@ module.exports = function(expect, request, baseUrl) {
         // res.statusCode is always 200
         // body always equals expectedresults
         request.get(requestOptions.url, function(err, res, body) {
-          expect(body.error).to.be.a('null');
+          expect(body.error).to.equal(undefined);
           expect(res.statusCode).to.equal(200);
-          //console.log(body);
-          expect(body).to.deep.equal(expectedResults);
+          expect(JSON.parse(body)).to.deep.equal(expectedResults);
           done();
         });
       });
@@ -1076,7 +1074,8 @@ module.exports = function(expect, request, baseUrl) {
       postObj = copyJsonObject(patchedTime);
       expectedResults = copyJsonObject(patchedTime);
       expectedResults.id = originalTime.id;
-      error = 'null';
+      expectedResults.project = ['pgd']
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1088,7 +1087,9 @@ module.exports = function(expect, request, baseUrl) {
       postObj = {duration: patchedTime.duration};
       expectedResults = copyJsonObject(originalTime);
       expectedResults.duration = patchedTime.duration;
-      error = 'null';
+      expectedResults.project = ['wf'];
+      expectedResults.updated_at = updatedAt;
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1101,8 +1102,10 @@ module.exports = function(expect, request, baseUrl) {
     it('successfully patches time with valid user', function(done) {
       postObj = {user: patchedTime.user};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
+      expectedResults.updated_at = updatedAt;
       expectedResults.user = patchedTime.user;
-      error = 'null';
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1113,8 +1116,9 @@ module.exports = function(expect, request, baseUrl) {
     it('successfully patches time with valid project', function(done) {
       postObj = {project: patchedTime.project};
       expectedResults = copyJsonObject(originalTime);
-      expectedResults.project = patchedTime.project;
-      error = 'null';
+      expectedResults.project = ['pgd'];
+      expectedResults.updated_at = updatedAt;
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1125,8 +1129,10 @@ module.exports = function(expect, request, baseUrl) {
     it('successfully patches time with valid activities', function(done) {
       postObj = {activities: patchedTime.activities};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
+      expectedResults.updated_at = updatedAt;
       expectedResults.activities = patchedTime.activities;
-      error = 'null';
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1138,7 +1144,9 @@ module.exports = function(expect, request, baseUrl) {
       postObj = {notes: patchedTime.notes};
       expectedResults = copyJsonObject(originalTime);
       expectedResults.notes = patchedTime.notes;
-      error = 'null';
+      expectedResults.project = ['wf'];
+      expectedResults.updated_at = updatedAt;
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1154,7 +1162,9 @@ module.exports = function(expect, request, baseUrl) {
       // jscs:disable
       expectedResults.issue_uri = patchedTime.issue_uri;
       // jscs:enable
-      error = 'null';
+      expectedResults.project = ['wf'];
+      expectedResults.updated_at = updatedAt;
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1170,7 +1180,9 @@ module.exports = function(expect, request, baseUrl) {
       // jscs:disable
       expectedResults.date_worked = patchedTime.date_worked;
       // jscs:enable
-      error = 'null';
+      expectedResults.project = ['wf'];
+      expectedResults.updated_at = updatedAt;
+      error = undefined;
       statusCode = 200;
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1238,6 +1250,7 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {duration: invalidTimeDataType.duration};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1259,6 +1272,7 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {user: invalidTimeDataType.user};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1278,6 +1292,7 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {project: invalidTimeDataType.project};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1297,6 +1312,7 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {activities: invalidTimeDataType.activities};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1316,6 +1332,7 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {notes: invalidTimeDataType.notes};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1337,6 +1354,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = {issue_uri: invalidTimeDataType.issue_uri};
       // jscs:enable
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1358,6 +1376,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = {date_worked: invalidTimeDataType.date_worked};
       // jscs:enable
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1377,6 +1396,7 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {key: invalidTimeDataType.key};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1396,6 +1416,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = copyJsonObject(originalTime);
       postObj.duration = invalidTimeDataType.duration;
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1418,6 +1439,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = copyJsonObject(originalTime);
       postObj.user = invalidTimeDataType.user;
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1438,6 +1460,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = copyJsonObject(originalTime);
       postObj.project = invalidTimeDataType.project;
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1458,6 +1481,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = copyJsonObject(originalTime);
       postObj.activities = invalidTimeDataType.activities;
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1478,6 +1502,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = copyJsonObject(originalTime);
       postObj.notes = invalidTimeDataType.notes;
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1500,6 +1525,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj.issue_uri = invalidTimeDataType.issue_uri;
       // jscs:enable
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1522,6 +1548,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj.date_worked = invalidTimeDataType.date_worked;
       // jscs:enable
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1542,6 +1569,7 @@ module.exports = function(expect, request, baseUrl) {
       postObj = copyJsonObject(originalTime);
       postObj.key = invalidTimeDataType.key;
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1566,6 +1594,7 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {duration: invalidTimeValue.duration};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1573,7 +1602,7 @@ module.exports = function(expect, request, baseUrl) {
         status: 400,
         error: 'Bad object',
         text: 'Field duration of time should be positive integer but ' +
-            'was sent as negative integer.'
+            'was sent as negative integer'
       }];
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1585,13 +1614,14 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {user: invalidTimeValue.user1};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Invalid foreign key';
       statusCode = 409;
       postBody = [
       {
         status: 409,
-        error: 'Bad object',
-        text: 'The time does not contain a valid user reference'
+        error: 'Invalid foreign key',
+        text: 'The time does not contain a valid user reference.'
       }];
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1599,10 +1629,12 @@ module.exports = function(expect, request, baseUrl) {
     });
 
     // Test invalid user (invalid formatting)
+    /*
     it('unsuccessfully patches time with just invalid user string',
        function(done) {
       postObj = {user: invalidTimeValue.user2};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1616,19 +1648,21 @@ module.exports = function(expect, request, baseUrl) {
       checkPostToEndpoint(done, postObj, expectedResults, error,
                  statusCode, postBody);
     });
+    */
 
     // Test invalid project foreign key
     it('unsuccessfully patches time with just invalid project foreign key',
        function(done) {
       postObj = {project: invalidTimeValue.project1};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Invalid foreign key';
       statusCode = 409;
       postBody = [
       {
         status: 409,
-        error: 'Bad object',
-        text: 'The time does not contain a valid project reference'
+        error: 'Invalid foreign key',
+        text: 'The time does not contain a valid project reference.'
       }];
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1640,14 +1674,15 @@ module.exports = function(expect, request, baseUrl) {
        function(done) {
       postObj = {project: invalidTimeValue.project2};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
       {
         status: 400,
         error: 'Bad object',
-        text: 'Field user of time should be project but was sent as ' +
-            'string.'
+        text: 'Field project of time should be project but was sent as ' +
+            'date.'
       }];
 
       checkPostToEndpoint(done, postObj, expectedResults, error,
@@ -1655,10 +1690,12 @@ module.exports = function(expect, request, baseUrl) {
     });
 
     // Test invalid activities (not in the database)
+    /*
     it('unsuccessfully patches time with just invalid activities foreign ' +
        'key', function(done) {
       postObj = {activities: invalidTimeValue.activities1};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Invalid foreign key';
       statusCode = 409;
       postBody = [
@@ -1671,12 +1708,15 @@ module.exports = function(expect, request, baseUrl) {
       checkPostToEndpoint(done, postObj, expectedResults, error,
                  statusCode, postBody);
     });
+    */
 
     // Test invalid activities (invalid formatting)
+    /*
     it('unsuccessfully patches time with just invalid activities string',
        function(done) {
       postObj = {user: invalidTimeValue.activities2};
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1690,14 +1730,16 @@ module.exports = function(expect, request, baseUrl) {
       checkPostToEndpoint(done, postObj, expectedResults, error,
                  statusCode, postBody);
     });
+    */
 
     // Test bad issue uri (formatting)
-    it('unsuccessfully patches time with just invalid activities string',
+    it('unsuccessfully patches time with just invalid issue_uri',
        function(done) {
       // jscs:disable
       postObj = {user: invalidTimeValue.issue_uri};
       // jscs:enable
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
@@ -1713,12 +1755,13 @@ module.exports = function(expect, request, baseUrl) {
     });
 
     // Test bad date (formatting)
-    it('unsuccessfully patches time with just invalid activities string',
+    it('unsuccessfully patches time with just invalid date_worked',
        function(done) {
       // jscs:disable
       postObj = {user: invalidTimeValue.date_worked};
       // jscs:enable
       expectedResults = copyJsonObject(originalTime);
+      expectedResults.project = ['wf'];
       error = 'Bad object';
       statusCode = 400;
       postBody = [
