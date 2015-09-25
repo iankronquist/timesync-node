@@ -80,6 +80,27 @@ $ curl -XGET -s localhost:8000/v1/times | python -m json.tool
 
 Your output should look something like the above.
 
+Development with Docker
+-----------------------
+
+There is a Dockerfile for developing and deploying TimeSync. Before starting
+the web application's container, you must start the PostGres database container
+and run migrations. These containers can be easily managed with
+`docker-compose`. If you are running the docker daemon on localhost, run:
+
+```
+# First start the postgres container
+$ docker-compose up postgres
+# Then run migrations
+$ export PG_CONNECTION_STRING=postgresql://timesync:pass@localhost:5432/timesync-prod
+$ export NODE_ENV=production
+$ npm run migrations
+# Finally, start the web application
+$ docker-compose up web
+
+```
+
+
 Documentation
 -------------
 
