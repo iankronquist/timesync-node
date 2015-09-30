@@ -291,8 +291,8 @@ module.exports = function(app) {
                 created_at: createdAt,
               };
 
-              knex.raw("SELECT setval('times_id_seq', " +
-              '(SELECT MAX(id) FROM times))').then(function() {
+              //knex.raw("SELECT setval('times_id_seq', " +
+              //'(SELECT MAX(id) FROM times))').then(function() {
                 knex('times').insert(insertion).returning('id').
                 then(function(timeIds) {
                   const timeId = timeIds[0];
@@ -307,9 +307,9 @@ module.exports = function(app) {
                     });
                   }
 
-                  knex.raw("SELECT setval('timesactivities_id_seq', " +
-                           '(SELECT MAX(id) FROM timesactivities))')
-                  .then(function() {
+                  //knex.raw("SELECT setval('timesactivities_id_seq', " +
+                  //         '(SELECT MAX(id) FROM timesactivities))')
+                  //.then(function() {
                     knex('timesactivities').insert(taInsertion)
                     .then(function() {
                       time.id = timeId;
@@ -320,12 +320,12 @@ module.exports = function(app) {
                         return res.status(err.status).send(err);
                       });
                     });
-                  });
+                  //});
                 }).catch(function(error) {
                   const err = errors.errorServerError(error);
                   return res.status(err.status).send(err);
                 });
-              });
+              //});
             }).catch(function() {
               const err = errors.errorInvalidForeignKey('time', 'activities');
               return res.status(err.status).send(err);

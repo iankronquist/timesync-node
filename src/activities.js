@@ -248,8 +248,8 @@ module.exports = function(app) {
           return res.status(err.status).send(err);
         }
 
-        knex.raw("SELECT setval('activities_id_seq', " +
-        '(SELECT MAX(id) FROM activities))').then(function() {
+        //knex.raw("SELECT setval('activities_id_seq', " +
+        //'(SELECT MAX(id) FROM activities))').then(function() {
           knex('activities').insert(obj).returning('id')
           .then(function(activities) {
             // activities is a list containing the ID of the
@@ -258,7 +258,7 @@ module.exports = function(app) {
             obj.id = activity;
             res.send(JSON.stringify(obj));
           });
-        });
+        //});
       });
     })(req, res, next);
   });
